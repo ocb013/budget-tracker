@@ -1,1 +1,1 @@
-export { Transaction } from './ui/Transaction/Transaction';
+export { TransactionForm } from './ui/TransactionForm/TransactionForm';

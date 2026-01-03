@@ -1,0 +1,12 @@
+import type { FC } from 'react';
+import clsx from 'clsx';
+import cls from './{{pascalCase name}}.module.scss';
+
+interface {{pascalCase name}}Props {
+    extraStyles?: string;
+}
+
+export const {{pascalCase name}}: FC<{{pascalCase name}}Props> = ({extraStyles}) => {
+
+    return <div className={clsx(cls.{{camelCase name}}, extraStyles)}>{{pascalCase name}}</div>;
+};

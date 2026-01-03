@@ -1,9 +1,9 @@
-import { Transaction } from '@/entities/transaction';
+import { TransactionForm } from '@/entities/transaction';
 
 function App() {
     return (
         <>
-            <Transaction />
+            <TransactionForm />
         </>
     );
 }
