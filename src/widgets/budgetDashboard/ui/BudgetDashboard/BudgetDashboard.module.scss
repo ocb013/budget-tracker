@@ -1,1 +1,24 @@
-.budgetDashboard { }
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+    padding: var(--s-6);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: var(--s-6);
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cardTitle {
+    font: var(--font-l);
+    margin-bottom: var(--s-3);
+}

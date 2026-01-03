@@ -1,1 +1,21 @@
 @use 'reset';
+@use 'variables';
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: var(--font-m);
+}
+
+.container {
+    width: 100%;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: var(--s-8) var(--s-4);
+}

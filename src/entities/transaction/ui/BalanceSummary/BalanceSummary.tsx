@@ -15,10 +15,28 @@ export const BalanceSummary: FC<BalanceSummaryProps> = ({
 }) => {
     return (
         <div className={clsx(cls.balanceSummary, className)}>
-            BalanceSummary
-            <div>{formatCents(totals.incomeCents)}</div>
-            <div>{formatCents(totals.balanceCents)}</div>
-            <div>{formatCents(totals.expenseCents)}</div>
+            <div className={cls.container}>
+                <span className={cls.label}>Your income</span>
+                <div className={cls.total}>
+                    {formatCents(totals.incomeCents)}
+                </div>
+            </div>
+
+            <div className={cls.container}>
+                <span className={cls.label}>Your expense</span>
+                <div className={cls.total}>
+                    {formatCents(totals.expenseCents)}
+                </div>
+            </div>
+
+            <div className={cls.line} />
+
+            <div className={cls.container}>
+                <span className={cls.label}>Your balance</span>
+                <div className={clsx(cls.balanceTotal)}>
+                    {formatCents(totals.balanceCents)}
+                </div>
+            </div>
         </div>
     );
 };

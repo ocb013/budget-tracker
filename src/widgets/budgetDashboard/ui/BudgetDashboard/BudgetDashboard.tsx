@@ -29,10 +29,16 @@ export const BudgetDashboard: FC<BudgetDashboardProps> = ({
         return <div>No transactions yet. Add your first one.</div>;
 
     return (
-        <div className={clsx(cls.budgetDashboard, className)}>
-            BudgetDashboard
-            <BalanceSummary totals={getTotals(data)} />
-            <TransactionList items={data} />
+        <div className={clsx(cls.grid, className)}>
+            <div className={cls.card}>
+                <h2 className={cls.cardTitle}>Balance Summary</h2>
+                <BalanceSummary totals={getTotals(data)} />
+            </div>
+
+            <div className={cls.card}>
+                <h2 className={cls.cardTitle}>Transaction List</h2>
+                <TransactionList items={data} />
+            </div>
         </div>
     );
 };

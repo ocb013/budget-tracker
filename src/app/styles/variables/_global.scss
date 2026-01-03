@@ -1,0 +1,53 @@
+:root {
+    /* Colors */
+    --bg: #f6f7fb;
+    --surface: #ffffff;
+    --text: #0f172a; /* slate-900 */
+    --muted: #64748b; /* slate-500 */
+    --border: rgba(15, 23, 42, 0.1);
+
+    --primary: #2563eb; /* blue-600 */
+    --primary-contrast: #ffffff;
+
+    --success: #16a34a; /* green-600 */
+    --danger: #dc2626; /* red-600 */
+
+    /* Text */
+    --font-family-main: consolas, ui-sans-serif, system-ui,
+        -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+        'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-size-m: 16px;
+    --font-line-m: 24px;
+    --font-m: var(--font-size-m) / var(--font-line-m)
+        var(--font-family-main);
+    --font-size-l: 24px;
+    --font-line-l: 32px;
+    --font-l: var(--font-size-l) / var(--font-line-l)
+        var(--font-family-main);
+    --font-size-xl: 32px;
+    --font-line-xl: 40px;
+    --font-xl: var(--font-size-xl) / var(--font-line-xl)
+        var(--font-family-main);
+
+    /* Radius */
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 18px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+    --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.08);
+
+    /* Spacing */
+    --s-1: 4px;
+    --s-2: 8px;
+    --s-3: 12px;
+    --s-4: 16px;
+    --s-5: 20px;
+    --s-6: 24px;
+    --s-8: 32px;
+    --s-10: 40px;
+
+    /* Layout */
+    --container: 1040px;
+}
