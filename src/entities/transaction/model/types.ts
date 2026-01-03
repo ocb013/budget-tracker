@@ -21,3 +21,9 @@ export interface Transaction {
 }
 
 export type NewTransactionInput = Omit<Transaction, 'id'>;
+
+export interface Totals {
+    incomeCents: number;
+    expenseCents: number;
+    balanceCents: number;
+}

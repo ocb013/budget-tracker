@@ -1,3 +1,5 @@
-export type { NewTransactionInput, Transaction } from './model/types';
+export { getTotals } from './model/calculations';
 
-export { TransactionForm } from './ui/TransactionForm/TransactionForm';
+export { TransactionList } from './ui/TransactionList/TransactionList';
+
+export type { NewTransactionInput, Transaction } from './model/types';

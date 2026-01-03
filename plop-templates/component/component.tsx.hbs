@@ -3,10 +3,10 @@ import clsx from 'clsx';
 import cls from './{{pascalCase name}}.module.scss';
 
 interface {{pascalCase name}}Props {
-    extraStyles?: string;
+    className?: string;
 }
 
-export const {{pascalCase name}}: FC<{{pascalCase name}}Props> = ({extraStyles}) => {
+export const {{pascalCase name}}: FC<{{pascalCase name}}Props> = ({className}) => {
 
-    return <div className={clsx(cls.{{camelCase name}}, extraStyles)}>{{pascalCase name}}</div>;
+    return <div className={clsx(cls.{{camelCase name}}, className)}>{{pascalCase name}}</div>;
 };
