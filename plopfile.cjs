@@ -27,7 +27,13 @@ module.exports = function (plop) {
                 type: 'list',
                 name: 'layer',
                 message: 'Layer?',
-                choices: ['entities', 'features', 'widgets', 'shared']
+                choices: [
+                    'entities',
+                    'features',
+                    'widgets',
+                    'shared',
+                    'pages'
+                ]
             },
 
             {
