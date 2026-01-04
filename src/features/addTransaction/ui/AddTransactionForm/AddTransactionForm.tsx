@@ -1,18 +1,10 @@
-import type { TransactionCategory } from '@/entities/transaction';
-import { todayISO } from '@/shared/lib/date';
-import { Card } from '@/shared/ui/Card/Card';
 import clsx from 'clsx';
-import {
-    useState,
-    type ChangeEvent,
-    type FC,
-    type FormEvent
-} from 'react';
-import { sanitizeAmountInput } from '../../lib/sanitizeAmountInput';
-import { transactionCategories } from '../../model/categories';
+import { type ChangeEvent, type FC } from 'react';
 import cls from './AddTransactionForm.module.scss';
 
-type TransactionType = 'expense' | 'income';
+import { Card } from '@/shared/ui/Card/Card';
+import { transactionCategories } from '../../model/categories';
+import { useAddTransactionForm } from '../../model/useAddTransactionForm';
 
 interface AddTransactionFormProps {
     className?: string;
@@ -21,31 +13,31 @@ interface AddTransactionFormProps {
 export const AddTransactionForm: FC<AddTransactionFormProps> = ({
     className
 }) => {
-    const [type, setType] = useState<TransactionType>('expense');
-    const [amount, setAmount] = useState<string>('');
-    const [category, setCategory] = useState<TransactionCategory>(
-        transactionCategories[0]
-    );
-    const [date, setDate] = useState<string>(todayISO());
-    const [description, setDescription] = useState<string>('');
+    const {
+        type,
+        amount,
+        date,
+        description,
+        category,
+        isPending,
+        onSubmit,
+        errors,
+        handleAmountChange,
+        handleChangeType,
+        handleChangeDescription,
+        handleChangeCategory,
+        handleDateChange,
+        submitError
+    } = useAddTransactionForm();
 
-    const isSubmitDisabled = amount.trim().length === 0;
-
-    const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setAmount(sanitizeAmountInput(e.target.value));
-    };
-
-    const onSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        console.log({ type, amount, category });
-    };
+    const isSubmitDisabled = isPending || amount.trim().length === 0;
 
     return (
         <Card
             title="Add transaction"
             className={clsx(cls.addTransactionForm, className)}
         >
-            <form className={cls.form} onSubmit={onSubmit}>
+            <form className={cls.form} onSubmit={onSubmit} noValidate>
                 <div
                     className={cls.typeToggle}
                     role="group"
@@ -56,7 +48,7 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
                         className={clsx(cls.typeButton, {
                             [cls.active]: type === 'income'
                         })}
-                        onClick={() => setType('income')}
+                        onClick={() => handleChangeType('income')}
                     >
                         Income
                     </button>
@@ -66,7 +58,7 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
                         className={clsx(cls.typeButton, {
                             [cls.active]: type === 'expense'
                         })}
-                        onClick={() => setType('expense')}
+                        onClick={() => handleChangeType('expense')}
                     >
                         Expense
                     </button>
@@ -75,13 +67,21 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
                 <label className={cls.field}>
                     <span className={cls.label}>Amount</span>
                     <input
-                        className={cls.input}
+                        className={clsx(cls.input, {
+                            [cls.inputError]: !!errors.amount
+                        })}
                         type="text"
                         inputMode="decimal"
                         placeholder="0.00"
                         value={amount}
                         onChange={handleAmountChange}
+                        aria-invalid={!!errors.amount}
                     />
+                    {errors.amount && (
+                        <div className={cls.errorText}>
+                            {errors.amount}
+                        </div>
+                    )}
                 </label>
 
                 <div className={cls.field}>
@@ -94,7 +94,9 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
                                 className={clsx(cls.categoryChip, {
                                     [cls.active]: c === category
                                 })}
-                                onClick={() => setCategory(c)}
+                                onClick={() =>
+                                    handleChangeCategory(c)
+                                }
                             >
                                 {c}
                             </button>
@@ -105,13 +107,19 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
                 <label className={cls.field}>
                     <span className={cls.label}>Date</span>
                     <input
-                        className={cls.input}
+                        className={clsx(cls.input, {
+                            [cls.inputError]: !!errors.date
+                        })}
                         type="date"
                         value={date}
-                        onChange={(
-                            e: ChangeEvent<HTMLInputElement>
-                        ) => setDate(e.target.value)}
+                        onChange={handleDateChange}
+                        aria-invalid={!!errors.date}
                     />
+                    {errors.date && (
+                        <div className={cls.errorText}>
+                            {errors.date}
+                        </div>
+                    )}
                 </label>
 
                 <label className={cls.field}>
@@ -124,7 +132,7 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
                         value={description}
                         onChange={(
                             e: ChangeEvent<HTMLInputElement>
-                        ) => setDescription(e.target.value)}
+                        ) => handleChangeDescription(e.target.value)}
                         placeholder="e.g. Groceries at Safeway"
                     />
                 </label>
@@ -135,8 +143,14 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
                         className={cls.submitButton}
                         disabled={isSubmitDisabled}
                     >
-                        Add
+                        {isPending ? 'Adding…' : 'Add'}
                     </button>
+
+                    {submitError && (
+                        <div className={cls.submitError}>
+                            Something went wrong. Please try again.
+                        </div>
+                    )}
                 </div>
             </form>
         </Card>

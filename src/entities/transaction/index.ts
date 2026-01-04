@@ -5,5 +5,6 @@ export { TransactionList } from './ui/TransactionList/TransactionList';
 export type {
     NewTransactionInput,
     Transaction,
-    TransactionCategory
+    TransactionCategory,
+    TransactionType
 } from './model/types';
