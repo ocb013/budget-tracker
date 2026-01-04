@@ -2,14 +2,11 @@ import type {
     NewTransactionInput,
     Transaction
 } from '@/entities/transaction';
+import { sortByDateDesc } from '../lib/transaction/sortByDateDesc';
 import { delay, readJson, writeJson } from './storage';
 
 const STORAGE_KEY = 'budget-tracker:transactions';
 const NETWORK_DELAY_MS = 250;
-
-function sortByDateDesc(items: Transaction[]): Transaction[] {
-    return [...items].sort((a, b) => b.date.localeCompare(a.date));
-}
 
 export async function getTransactions(): Promise<Transaction[]> {
     await delay(NETWORK_DELAY_MS);
