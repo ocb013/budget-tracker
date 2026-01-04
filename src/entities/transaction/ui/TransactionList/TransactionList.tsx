@@ -19,9 +19,16 @@ export const TransactionList: FC<TransactionListProps> = ({
             className={clsx(cls.transactionList, className)}
             title="Transaction List"
         >
-            {items.map((item) => (
-                <TransactionItem transaction={item} key={item.id} />
-            ))}
+            {items.length > 0 ? (
+                items.map((item) => (
+                    <TransactionItem
+                        transaction={item}
+                        key={item.id}
+                    />
+                ))
+            ) : (
+                <div>No transactions yet. Add your first one.</div>
+            )}
         </Card>
     );
 };

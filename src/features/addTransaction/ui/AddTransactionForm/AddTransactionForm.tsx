@@ -3,7 +3,6 @@ import { todayISO } from '@/shared/lib/date';
 import { Card } from '@/shared/ui/Card/Card';
 import clsx from 'clsx';
 import {
-    useMemo,
     useState,
     type ChangeEvent,
     type FC,
@@ -30,9 +29,7 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
     const [date, setDate] = useState<string>(todayISO());
     const [description, setDescription] = useState<string>('');
 
-    const isSubmitDisabled = useMemo(() => {
-        return amount.trim().length === 0;
-    }, [amount]);
+    const isSubmitDisabled = amount.trim().length === 0;
 
     const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
         setAmount(sanitizeAmountInput(e.target.value));

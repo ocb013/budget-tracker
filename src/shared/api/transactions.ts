@@ -2,7 +2,6 @@ import type {
     NewTransactionInput,
     Transaction
 } from '@/entities/transaction';
-import { __DEV__ } from '../lib/env';
 import { delay, readJson, writeJson } from './storage';
 
 const STORAGE_KEY = 'budget-tracker:transactions';
@@ -14,36 +13,6 @@ function sortByDateDesc(items: Transaction[]): Transaction[] {
 
 export async function getTransactions(): Promise<Transaction[]> {
     await delay(NETWORK_DELAY_MS);
-
-    if (__DEV__) {
-        return [
-            {
-                id: crypto.randomUUID(),
-                type: 'income',
-                amountCents: 450000,
-                category: 'Salary',
-                date: '2026-01-01',
-                description: 'January salary'
-            },
-            {
-                id: crypto.randomUUID(),
-                type: 'expense',
-                amountCents: 120000,
-                category: 'Rent',
-                date: '2026-01-02',
-                description: 'Apartment rent'
-            },
-            {
-                id: crypto.randomUUID(),
-                type: 'expense',
-                amountCents: 3500,
-                category: 'Food',
-                date: '2026-01-02',
-                description: 'Groceries'
-            }
-        ];
-    }
-
     const items = readJson<Transaction[]>(STORAGE_KEY, []);
     return sortByDateDesc(items);
 }

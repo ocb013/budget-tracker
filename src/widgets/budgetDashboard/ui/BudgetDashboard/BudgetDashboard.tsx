@@ -26,38 +26,14 @@ export const BudgetDashboard: FC<BudgetDashboardProps> = ({
             </div>
         );
 
-    if (!data || data.length === 0)
-        return (
-            <div className={clsx(cls.grid, className)}>
-                <div className={cls.leftCol}>
-                    <AddTransactionForm />
-                    <div className={cls.card}>
-                        <h2 className={cls.cardTitle}>
-                            Balance Summary
-                        </h2>
-                        <BalanceSummary totals={getTotals([])} />
-                    </div>
-                </div>
-
-                <div className={cls.card}>
-                    <h2 className={cls.cardTitle}>
-                        Transaction List
-                    </h2>
-                    <div>
-                        No transactions yet. Add your first one.
-                    </div>
-                </div>
-            </div>
-        );
-
     return (
         <div className={clsx(cls.grid, className)}>
             <div className={cls.leftCol}>
                 <AddTransactionForm />
-                <BalanceSummary totals={getTotals(data)} />
+                <BalanceSummary totals={getTotals(data ?? [])} />
             </div>
 
-            <TransactionList items={data} />
+            <TransactionList items={data ?? []} />
         </div>
     );
 };
