@@ -87,7 +87,6 @@ module.exports = function (plop) {
                     ? answers.sliceNew
                     : answers.sliceChoice;
 
-            // 👇 чтобы slice был доступен в hbs
             answers.slice = slice;
 
             const basePath =

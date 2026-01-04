@@ -1,0 +1,89 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+}
+
+.typeToggle {
+    display: inline-flex;
+    width: fit-content;
+    padding: var(--s-2);
+    gap: var(--s-1);
+    border-radius: var(--r-lg);
+    background: var(--bg);
+    border: 1px solid var(--border);
+}
+
+.typeButton {
+    cursor: pointer;
+    border: 0;
+    background: transparent;
+    padding: var(--s-2) var(--s-3);
+    border-radius: var(--r-lg);
+    color: var(--text);
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+}
+
+.label {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.input {
+    width: 100%;
+    max-width: 260px;
+    border-radius: var(--r-lg);
+    padding: var(--s-3);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    outline: none;
+}
+
+.input:focus {
+    border-color: rgba(37, 99, 235, 0.45);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+}
+
+.categoryChip {
+    cursor: pointer;
+    border-radius: var(--r-lg);
+    padding: var(--s-2) var(--s-3);
+    background: var(--bg);
+    border: 1px solid var(--border);
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: var(--s-2);
+    margin-top: var(--s-2);
+}
+
+.submitButton {
+    cursor: pointer;
+    border: 0;
+    border-radius: var(--r-lg);
+    padding: var(--s-3) var(--s-8);
+    background: var(--primary);
+    color: var(--primary-contrast);
+}
+
+.submitButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.active {
+    background: rgba(67, 109, 200, 0.191);
+}

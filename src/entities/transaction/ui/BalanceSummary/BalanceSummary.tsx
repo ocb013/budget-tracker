@@ -1,4 +1,5 @@
 import { formatCents } from '@/shared/lib/money';
+import { Card } from '@/shared/ui/Card/Card';
 import clsx from 'clsx';
 import type { FC } from 'react';
 import type { Totals } from '../../model/types';
@@ -14,7 +15,10 @@ export const BalanceSummary: FC<BalanceSummaryProps> = ({
     totals
 }) => {
     return (
-        <div className={clsx(cls.balanceSummary, className)}>
+        <Card
+            className={clsx(cls.balanceSummary, className)}
+            title="Balance Summary"
+        >
             <div className={cls.container}>
                 <span className={cls.label}>Your income</span>
                 <div className={cls.total}>
@@ -37,6 +41,6 @@ export const BalanceSummary: FC<BalanceSummaryProps> = ({
                     {formatCents(totals.balanceCents)}
                 </div>
             </div>
-        </div>
+        </Card>
     );
 };

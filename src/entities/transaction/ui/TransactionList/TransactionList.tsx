@@ -1,3 +1,4 @@
+import { Card } from '@/shared/ui/Card/Card';
 import clsx from 'clsx';
 import type { FC } from 'react';
 import type { Transaction } from '../../model/types';
@@ -14,10 +15,13 @@ export const TransactionList: FC<TransactionListProps> = ({
     items
 }) => {
     return (
-        <div className={clsx(cls.transactionList, className)}>
+        <Card
+            className={clsx(cls.transactionList, className)}
+            title="Transaction List"
+        >
             {items.map((item) => (
                 <TransactionItem transaction={item} key={item.id} />
             ))}
-        </div>
+        </Card>
     );
 };

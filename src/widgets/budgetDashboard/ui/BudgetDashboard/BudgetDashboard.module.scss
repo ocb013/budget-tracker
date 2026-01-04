@@ -18,7 +18,8 @@
     }
 }
 
-.cardTitle {
-    font: var(--font-l);
-    margin-bottom: var(--s-3);
+.leftCol {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-6);
 }
