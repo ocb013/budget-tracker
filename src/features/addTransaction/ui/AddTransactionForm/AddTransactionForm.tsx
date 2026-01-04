@@ -1,4 +1,5 @@
 import type { TransactionCategory } from '@/entities/transaction';
+import { todayISO } from '@/shared/lib/date';
 import { Card } from '@/shared/ui/Card/Card';
 import clsx from 'clsx';
 import {
@@ -26,6 +27,8 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
     const [category, setCategory] = useState<TransactionCategory>(
         transactionCategories[0]
     );
+    const [date, setDate] = useState<string>(todayISO());
+    const [description, setDescription] = useState<string>('');
 
     const isSubmitDisabled = useMemo(() => {
         return amount.trim().length === 0;
@@ -101,6 +104,33 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
                         ))}
                     </div>
                 </div>
+
+                <label className={cls.field}>
+                    <span className={cls.label}>Date</span>
+                    <input
+                        className={cls.input}
+                        type="date"
+                        value={date}
+                        onChange={(
+                            e: ChangeEvent<HTMLInputElement>
+                        ) => setDate(e.target.value)}
+                    />
+                </label>
+
+                <label className={cls.field}>
+                    <span className={cls.label}>
+                        Description (optional)
+                    </span>
+                    <input
+                        className={cls.input}
+                        type="text"
+                        value={description}
+                        onChange={(
+                            e: ChangeEvent<HTMLInputElement>
+                        ) => setDescription(e.target.value)}
+                        placeholder="e.g. Groceries at Safeway"
+                    />
+                </label>
 
                 <div className={cls.actions}>
                     <button
