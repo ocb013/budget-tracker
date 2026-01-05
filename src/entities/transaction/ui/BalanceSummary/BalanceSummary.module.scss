@@ -26,3 +26,10 @@
     height: 1px;
     background: var(--border);
 }
+
+.balanceSkeleton {
+    display: flex;
+    flex-direction: row;
+    gap: var(--s-2);
+    align-items: center;
+}

@@ -17,8 +17,6 @@ export const BudgetDashboard: FC<BudgetDashboardProps> = ({
     const { data, isLoading, isError, error } =
         useTransactionsQuery();
 
-    if (isLoading) return <div>Loading transactions…</div>;
-
     if (isError)
         return (
             <div>
@@ -30,10 +28,16 @@ export const BudgetDashboard: FC<BudgetDashboardProps> = ({
         <div className={clsx(cls.grid, className)}>
             <div className={cls.leftCol}>
                 <AddTransactionForm />
-                <BalanceSummary totals={getTotals(data ?? [])} />
+                <BalanceSummary
+                    totals={getTotals(data ?? [])}
+                    isLoading={isLoading}
+                />
             </div>
 
-            <TransactionList items={data ?? []} />
+            <TransactionList
+                items={data ?? []}
+                isLoading={isLoading}
+            />
         </div>
     );
 };

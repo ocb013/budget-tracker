@@ -1,1 +1,29 @@
-.transactionList { }
+.transactionList {
+}
+
+.skeletonWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+}
+
+.skeletonItem {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+}
+
+.skeletonTopRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+}
+
+.skeletonBottomRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    margin-top: var(--s-1);
+}
