@@ -14,17 +14,31 @@ export const TransactionItem: FC<TransactionItemProps> = ({
     transaction
 }) => {
     return (
-        <div className={clsx(cls.transactionItem, className)}>
-            <div className="">{transaction.type}</div>
-            <div className="">{transaction.category}</div>
-            <div className="">
-                {formatCents(transaction.amountCents)}
+        <div className={clsx(cls.item, className)}>
+            <div className={cls.topRow}>
+                <div className={cls.category}>
+                    {transaction.category}
+                </div>
+                <div
+                    className={clsx(cls.amount, {
+                        [cls.income]: transaction.type === 'income',
+                        [cls.expense]: transaction.type === 'expense'
+                    })}
+                >
+                    {formatCents(transaction.amountCents)}
+                </div>
             </div>
-            <div className="">{transaction.date}</div>
 
-            {transaction.description && (
-                <div className="">{transaction.description}</div>
-            )}
+            <div className={cls.bottomRow}>
+                <div className={cls.metaLeft}>
+                    {transaction.description?.trim()
+                        ? transaction.description
+                        : transaction.type === 'income'
+                        ? 'Income'
+                        : 'Expense'}
+                </div>
+                <div className={cls.date}>{transaction.date}</div>
+            </div>
         </div>
     );
 };

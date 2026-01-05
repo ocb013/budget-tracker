@@ -10,21 +10,22 @@ interface TransactionListProps {
     isLoading?: boolean;
     className?: string;
     items: Transaction[];
+    height?: number;
 }
 
 function TransactionListSkeleton() {
     return (
-        <div className={cls.skeletonWrapper}>
-            {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className={cls.skeletonItem}>
+        <div className={cls.list}>
+            {Array.from({ length: 7 }).map((_, i) => (
+                <div key={i} className={cls.skeletonRow}>
                     <div className={cls.skeletonTopRow}>
-                        <Skeleton height={14} width="60%" />
-                        <Skeleton height={14} width="25%" />
+                        <Skeleton height={14} width="55%" />
+                        <Skeleton height={14} width="22%" />
                     </div>
 
                     <div className={cls.skeletonBottomRow}>
                         <Skeleton height={12} width="45%" />
-                        <Skeleton height={12} width="20%" />
+                        <Skeleton height={12} width="18%" />
                     </div>
                 </div>
             ))}
@@ -35,26 +36,43 @@ function TransactionListSkeleton() {
 export const TransactionList: FC<TransactionListProps> = ({
     isLoading,
     className,
-    items
+    items,
+    height
 }) => {
     let content: ReactNode;
 
     if (isLoading) {
         content = <TransactionListSkeleton />;
     } else if (items.length === 0) {
-        content = <div>No transactions yet. Add your first one.</div>;
+        content = (
+            <div className={cls.emptyState}>
+                No transactions yet. Add your first one.
+            </div>
+        );
     } else {
-        content = items.map((item) => (
-            <TransactionItem transaction={item} key={item.id} />
-        ));
+        content = (
+            <div className={cls.list}>
+                {items.map((item) => (
+                    <TransactionItem
+                        transaction={item}
+                        key={item.id}
+                    />
+                ))}
+            </div>
+        );
     }
 
     return (
-        <Card
-            className={clsx(cls.transactionList, className)}
-            title="Transaction List"
+        <div
+            className={clsx(cls.wrapper, className)}
+            style={height ? { height } : undefined}
         >
-            {content}
-        </Card>
+            <Card
+                title="Transaction List"
+                className={cls.transactionList}
+            >
+                <div className={cls.scrollArea}>{content}</div>
+            </Card>
+        </div>
     );
 };

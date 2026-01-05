@@ -1,11 +1,12 @@
 import clsx from 'clsx';
-import type { FC } from 'react';
+import { useRef, type FC } from 'react';
 import cls from './BudgetDashboard.module.scss';
 
 import { getTotals, TransactionList } from '@/entities/transaction';
 import { BalanceSummary } from '@/entities/transaction/ui/BalanceSummary/BalanceSummary';
 import { AddTransactionForm } from '@/features/addTransaction';
 import { useTransactionsQuery } from '@/shared/api/queries/transactions';
+import { useElementHeight } from '@/shared/lib/dom/useElementHeight';
 
 interface BudgetDashboardProps {
     className?: string;
@@ -17,6 +18,9 @@ export const BudgetDashboard: FC<BudgetDashboardProps> = ({
     const { data, isLoading, isError, error } =
         useTransactionsQuery();
 
+    const leftColRef = useRef<HTMLDivElement | null>(null);
+    const leftColHeight = useElementHeight(leftColRef);
+
     if (isError)
         return (
             <div>
@@ -26,7 +30,7 @@ export const BudgetDashboard: FC<BudgetDashboardProps> = ({
 
     return (
         <div className={clsx(cls.grid, className)}>
-            <div className={cls.leftCol}>
+            <div className={cls.leftCol} ref={leftColRef}>
                 <AddTransactionForm />
                 <BalanceSummary
                     totals={getTotals(data ?? [])}
@@ -37,6 +41,7 @@ export const BudgetDashboard: FC<BudgetDashboardProps> = ({
             <TransactionList
                 items={data ?? []}
                 isLoading={isLoading}
+                height={leftColHeight || undefined}
             />
         </div>
     );

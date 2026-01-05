@@ -1,1 +1,59 @@
-.transactionItem { }
+.item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+    padding: var(--s-3) 0;
+    border-top: 1px solid var(--border);
+}
+
+.item:first-child {
+    border-top: 0;
+    padding-top: 0;
+}
+
+.topRow {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+}
+
+.category {
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.amount {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.income {
+    color: var(--success, #1a7f37);
+}
+
+.expense {
+    color: var(--danger, #b42318);
+}
+
+.bottomRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.metaLeft {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.date {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
