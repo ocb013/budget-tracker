@@ -10,7 +10,7 @@ import type { AddTransactionFormErrors } from './types';
 
 import { useAddTransactionMutation } from '@/shared/api/queries/transactions';
 import { todayISO } from '@/shared/lib/date';
-import { parseAmountToCents } from '@/shared/lib/money';
+import { parseAmountToCents } from '@/shared/lib/money/money';
 import { sanitizeAmountInput } from '../lib/sanitizeAmountInput';
 import { validateAddTransactionForm } from './validateAddTransactionForm';
 

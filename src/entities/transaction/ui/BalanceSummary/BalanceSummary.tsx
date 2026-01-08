@@ -1,4 +1,4 @@
-import { formatCents } from '@/shared/lib/money';
+import { formatCents } from '@/shared/lib/money/money';
 import { Card } from '@/shared/ui/Card/Card';
 import { Skeleton } from '@/shared/ui/Skeleton/Skeleton';
 import clsx from 'clsx';

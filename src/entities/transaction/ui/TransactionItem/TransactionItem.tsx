@@ -1,4 +1,4 @@
-import { formatCents } from '@/shared/lib/money';
+import { formatCents } from '@/shared/lib/money/money';
 import clsx from 'clsx';
 import type { FC } from 'react';
 import type { Transaction } from '../../model/types';
