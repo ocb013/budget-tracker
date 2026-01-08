@@ -14,7 +14,9 @@ export const DashboardPage: FC<DashboardPageProps> = ({
         <div className={clsx(cls.dashboardPage, className)}>
             <div className="container">
                 <header className={cls.header}>
-                    <h1 className={cls.title}>Budget Tracker</h1>
+                    <a href="/">
+                        <h1 className={cls.title}>Budget Tracker</h1>
+                    </a>
                     <p className={cls.subtitle}>
                         Track your income and expenses
                     </p>

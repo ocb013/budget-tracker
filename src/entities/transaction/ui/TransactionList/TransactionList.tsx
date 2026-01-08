@@ -1,3 +1,4 @@
+import { useDeleteTransactionMutation } from '@/shared/api/queries/transactions';
 import { Card } from '@/shared/ui/Card/Card';
 import { Skeleton } from '@/shared/ui/Skeleton/Skeleton';
 import clsx from 'clsx';
@@ -39,6 +40,8 @@ export const TransactionList: FC<TransactionListProps> = ({
     items,
     height
 }) => {
+    const { mutate, isPending } = useDeleteTransactionMutation();
+
     let content: ReactNode;
 
     if (isLoading) {
@@ -56,6 +59,8 @@ export const TransactionList: FC<TransactionListProps> = ({
                     <TransactionItem
                         transaction={item}
                         key={item.id}
+                        onDelete={mutate}
+                        isDeleting={isPending}
                     />
                 ))}
             </div>

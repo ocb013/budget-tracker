@@ -8,7 +8,11 @@ import {
     useQuery,
     useQueryClient
 } from '@tanstack/react-query';
-import { addTransaction, getTransactions } from '../transactions';
+import {
+    addTransaction,
+    deleteTransaction,
+    getTransactions
+} from '../transactions';
 
 export const transactionsKeys = {
     all: ['transactions'] as const
@@ -66,11 +70,53 @@ export function useAddTransactionMutation() {
                 transactionsKeys.all,
                 (old) => {
                     const items = old ?? [];
-                    return items.map((t) =>
-                        t.id === ctx.optimisticId ? serverTx : t
+                    return sortByDateDesc(
+                        items.map((t) =>
+                            t.id === ctx.optimisticId ? serverTx : t
+                        )
                     );
                 }
             );
+        },
+
+        onSettled: async () => {
+            await qc.invalidateQueries({
+                queryKey: transactionsKeys.all
+            });
+        }
+    });
+}
+
+export function useDeleteTransactionMutation() {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: (id: string) => deleteTransaction(id),
+
+        onMutate: async (id) => {
+            await qc.cancelQueries({
+                queryKey: transactionsKeys.all
+            });
+
+            const prev = qc.getQueryData<Transaction[]>(
+                transactionsKeys.all
+            );
+
+            qc.setQueryData<Transaction[]>(
+                transactionsKeys.all,
+                (old) => {
+                    const items = old ?? [];
+                    return items.filter((t) => t.id !== id);
+                }
+            );
+
+            return { prev };
+        },
+
+        onError: (_err, _input, ctx) => {
+            if (ctx?.prev) {
+                qc.setQueryData(transactionsKeys.all, ctx.prev);
+            }
         },
 
         onSettled: async () => {
