@@ -30,7 +30,9 @@ const initialFormState: AddTransactionFormState = {
     description: ''
 };
 
-export const useAddTransactionForm = () => {
+export const useAddTransactionForm = (opts?: {
+    onSuccess?: () => void;
+}) => {
     const [form, setForm] =
         useState<AddTransactionFormState>(initialFormState);
     const [errors, setErrors] = useState<AddTransactionFormErrors>(
@@ -112,6 +114,7 @@ export const useAddTransactionForm = () => {
                     amount: '',
                     description: ''
                 }));
+                opts?.onSuccess?.();
             }
         });
     };

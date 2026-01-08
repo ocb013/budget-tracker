@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { type ChangeEvent, type FC } from 'react';
+import { useRef, type ChangeEvent, type FC } from 'react';
 import cls from './AddTransactionForm.module.scss';
 
 import { Card } from '@/shared/ui/Card/Card';
@@ -13,6 +13,8 @@ interface AddTransactionFormProps {
 export const AddTransactionForm: FC<AddTransactionFormProps> = ({
     className
 }) => {
+    const amountRef = useRef<HTMLInputElement | null>(null);
+
     const {
         type,
         amount,
@@ -28,7 +30,11 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
         handleChangeCategory,
         handleDateChange,
         submitError
-    } = useAddTransactionForm();
+    } = useAddTransactionForm({
+        onSuccess: () => {
+            queueMicrotask(() => amountRef.current?.focus());
+        }
+    });
 
     const isSubmitDisabled = isPending || amount.trim().length === 0;
 
@@ -76,6 +82,7 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
                         value={amount}
                         onChange={handleAmountChange}
                         aria-invalid={!!errors.amount}
+                        ref={amountRef}
                     />
                     {errors.amount && (
                         <div className={cls.errorText}>
