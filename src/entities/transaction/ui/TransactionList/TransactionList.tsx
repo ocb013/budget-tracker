@@ -2,9 +2,10 @@ import { useDeleteTransactionMutation } from '@/shared/api/queries/transactions'
 import { Card } from '@/shared/ui/Card/Card';
 import { Skeleton } from '@/shared/ui/Skeleton/Skeleton';
 import clsx from 'clsx';
-import type { FC, ReactNode } from 'react';
-import type { Transaction } from '../../model/types';
+import { useMemo, useState, type FC, type ReactNode } from 'react';
+import type { SortMode, Transaction } from '../../model/types';
 import { TransactionItem } from '../TransactionItem/TransactionItem';
+import { TransactionSortToggle } from '../TransactionSortToggle/TransactionSortToggle';
 import cls from './TransactionList.module.scss';
 
 interface TransactionListProps {
@@ -45,11 +46,25 @@ export const TransactionList: FC<TransactionListProps> = ({
 
     const deletingId = isPending ? variables : undefined;
 
+    const [sort, setSort] = useState<SortMode>('date');
+
+    const sortedItems = useMemo(() => {
+        if (sort === 'date') {
+            return items;
+        }
+
+        return [...items].sort((a, b) => {
+            const diff = b.amountCents - a.amountCents;
+            if (diff !== 0) return diff;
+            return b.date.localeCompare(a.date);
+        });
+    }, [items, sort]);
+
     let content: ReactNode;
 
     if (isLoading) {
         content = <TransactionListSkeleton />;
-    } else if (items.length === 0) {
+    } else if (sortedItems.length === 0) {
         content = (
             <div className={cls.emptyState}>
                 No transactions yet. Add your first one.
@@ -58,7 +73,7 @@ export const TransactionList: FC<TransactionListProps> = ({
     } else {
         content = (
             <div className={cls.list}>
-                {items.map((item) => (
+                {sortedItems.map((item) => (
                     <TransactionItem
                         transaction={item}
                         key={item.id}
@@ -70,6 +85,10 @@ export const TransactionList: FC<TransactionListProps> = ({
         );
     }
 
+    const rightSlot = (
+        <TransactionSortToggle value={sort} onChange={setSort} />
+    );
+
     return (
         <div
             className={clsx(cls.wrapper, className)}
@@ -77,6 +96,7 @@ export const TransactionList: FC<TransactionListProps> = ({
         >
             <Card
                 title="Transaction List"
+                rightSlot={rightSlot}
                 className={cls.transactionList}
             >
                 <div className={cls.scrollArea}>{content}</div>

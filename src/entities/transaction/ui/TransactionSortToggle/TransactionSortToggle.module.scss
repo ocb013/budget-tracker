@@ -1,0 +1,38 @@
+.sortToggle {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    overflow: hidden;
+    background: var(--bg);
+}
+
+.sortButton {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font: var(--font-s);
+    font-weight: 600;
+    padding: 6px 10px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.sortActive {
+    background: var(--surface);
+    color: var(--text);
+    cursor: default;
+}
+
+.sortButton:not(.sortActive):hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--text);
+}
+
+.sortButton + .sortButton {
+    border-left: 1px solid var(--border);
+}
+
+.sortButton:disabled {
+    opacity: 1;
+}

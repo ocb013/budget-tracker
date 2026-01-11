@@ -27,3 +27,5 @@ export interface Totals {
     expenseCents: number;
     balanceCents: number;
 }
+
+export type SortMode = 'date' | 'amount';
