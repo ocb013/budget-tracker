@@ -31,9 +31,8 @@ describe('DeleteTransaction flow', () => {
         );
     });
 
-    it('deletes a transaction after confirmation', async () => {
+    it('deletes a transaction after inline confirmation', async () => {
         const user = userEvent.setup();
-        vi.spyOn(window, 'confirm').mockReturnValue(true);
 
         renderWithProviders(<DashboardPage />);
 
@@ -46,22 +45,28 @@ describe('DeleteTransaction flow', () => {
         // Ensure visible
         expect(await txList.findByText('$12.34')).toBeInTheDocument();
 
-        const deleteBtn = txList.getByRole('button', {
+        // Open confirm (keyboard path)
+        const deleteXBtn = txList.getByRole('button', {
             name: /delete transaction/i
         });
-
-        // Keyboard path (works even if pointer-events is none)
-        deleteBtn.focus();
+        deleteXBtn.focus();
         await user.keyboard('{Enter}');
+
+        // Confirm UI should appear
+        // (Either the "Delete?" text or the "Delete" button—depending on your UI)
+        const confirmDeleteBtn = await txList.findByRole('button', {
+            name: /^delete$/i
+        });
+
+        await user.click(confirmDeleteBtn);
 
         // Removed optimistically
         expect(txList.queryByText('$12.34')).not.toBeInTheDocument();
         expect(txList.queryByText('Food')).not.toBeInTheDocument();
     });
 
-    it('does not delete if user cancels confirmation', async () => {
+    it('does not delete if user cancels inline confirmation', async () => {
         const user = userEvent.setup();
-        vi.spyOn(window, 'confirm').mockReturnValue(false);
 
         renderWithProviders(<DashboardPage />);
 
@@ -73,14 +78,21 @@ describe('DeleteTransaction flow', () => {
 
         expect(await txList.findByText('$12.34')).toBeInTheDocument();
 
-        const deleteBtn = txList.getByRole('button', {
+        // Open confirm
+        const deleteXBtn = txList.getByRole('button', {
             name: /delete transaction/i
         });
-
-        deleteBtn.focus();
+        deleteXBtn.focus();
         await user.keyboard('{Enter}');
+
+        // Click Cancel
+        const cancelBtn = await txList.findByRole('button', {
+            name: /^cancel$/i
+        });
+        await user.click(cancelBtn);
 
         // Still there
         expect(txList.getByText('$12.34')).toBeInTheDocument();
+        expect(txList.getByText('Food')).toBeInTheDocument();
     });
 });

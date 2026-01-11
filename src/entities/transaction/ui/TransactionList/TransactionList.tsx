@@ -40,7 +40,10 @@ export const TransactionList: FC<TransactionListProps> = ({
     items,
     height
 }) => {
-    const { mutate, isPending } = useDeleteTransactionMutation();
+    const { mutate, isPending, variables } =
+        useDeleteTransactionMutation();
+
+    const deletingId = isPending ? variables : undefined;
 
     let content: ReactNode;
 
@@ -60,7 +63,7 @@ export const TransactionList: FC<TransactionListProps> = ({
                         transaction={item}
                         key={item.id}
                         onDelete={mutate}
-                        isDeleting={isPending}
+                        isDeleting={deletingId === item.id}
                     />
                 ))}
             </div>

@@ -4,6 +4,7 @@
     gap: var(--s-2);
     padding: var(--s-3) 0;
     border-top: 1px solid var(--border);
+    position: relative;
 }
 
 .item:first-child {
@@ -83,6 +84,7 @@
 
 .deleteButton:focus-visible {
     outline: 1px solid var(--border);
+    outline-offset: 2px;
 }
 
 .bottomRow {
@@ -106,4 +108,62 @@
 .date {
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
+}
+
+/* Confirm UI */
+
+.confirmRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+
+    margin-top: var(--s-2);
+    padding: var(--s-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.confirmText {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.confirmActions {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+}
+
+.confirmCancel,
+.confirmDelete {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    border-radius: var(--r-sm);
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.confirmCancel:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.confirmDelete {
+    border-color: rgba(180, 35, 24, 0.35);
+    color: var(--danger, #b42318);
+}
+
+.confirmDelete:hover {
+    background: rgba(180, 35, 24, 0.08);
+}
+
+.confirmCancel:disabled,
+.confirmDelete:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }

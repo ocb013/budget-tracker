@@ -19,3 +19,11 @@ textarea {
 input {
     all: unset;
 }
+
+button {
+    all: unset;
+    cursor: pointer;
+    font: inherit;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
