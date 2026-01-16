@@ -7,10 +7,10 @@ import { TRANSACTIONS_STORAGE_KEY } from '@/shared/constants/storage';
 import { renderWithProviders } from '@/shared/test/renderWithProviders';
 
 // Make delay() instant to keep tests fast and deterministic
-vi.mock('@/shared/api/storage', async () => {
+vi.mock('@/shared/api/transactions', async () => {
     const actual = await vi.importActual<
-        typeof import('@/shared/api/storage')
-    >('@/shared/api/storage');
+        typeof import('@/shared/api/transactions')
+    >('@/shared/api/transactions');
     return { ...actual, delay: () => Promise.resolve() };
 });
 
@@ -39,18 +39,12 @@ describe('AddTransaction flow', () => {
             screen.getByRole('button', { name: /^add$/i })
         );
 
-        // Scope assertions to the Transaction List card, since $10.00 also appears in Balance Summary
-        const txListHeading = screen.getByRole('heading', {
+        const txCard = screen.getByRole('region', {
             name: /transaction list/i
         });
+        const tx = within(txCard);
 
-        const txListCard =
-            txListHeading.closest('div')?.parentElement;
-        expect(txListCard).toBeTruthy();
-
-        const txList = within(txListCard as HTMLElement);
-
-        expect(await txList.findByText('$10.00')).toBeInTheDocument();
+        expect(await tx.findByText('$10.00')).toBeInTheDocument();
 
         // After success: amount cleared and input focused (focus runs in a microtask)
         await waitFor(() => {

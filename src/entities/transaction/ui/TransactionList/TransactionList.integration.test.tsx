@@ -1,105 +1,108 @@
-import { screen, within } from '@testing-library/react';
+import { renderWithProviders } from '@/shared/test/renderWithProviders';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useEffect, useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { DashboardPage } from '@/pages/dashboard';
-import { TRANSACTIONS_STORAGE_KEY } from '@/shared/constants/storage';
-import { renderWithProviders } from '@/shared/test/renderWithProviders';
+import type { Transaction } from '../../model/types';
+import { TransactionList } from './TransactionList';
 
-vi.mock('@/shared/api/storage', async () => {
-    const actual = await vi.importActual<
-        typeof import('@/shared/api/storage')
-    >('@/shared/api/storage');
-    return { ...actual, delay: () => Promise.resolve() };
+const initialTx: Transaction = {
+    id: 'tx-1',
+    type: 'expense',
+    amountCents: 1234,
+    category: 'Food',
+    date: '2026-01-02',
+    description: 'Groceries'
+};
+
+let setItemsRef: React.Dispatch<
+    React.SetStateAction<Transaction[]>
+> | null = null;
+
+const mutateMock = vi.fn((id: string) => {
+    setItemsRef?.((prev) => prev.filter((t) => t.id !== id));
 });
 
-describe('DeleteTransaction flow', () => {
+vi.mock('@/shared/api/queries/transactions', () => ({
+    useDeleteTransactionMutation: () => ({
+        mutate: (id: string) => mutateMock(id),
+        isPending: false,
+        variables: undefined
+    })
+}));
+
+function Host({ items }: { items: Transaction[] }) {
+    const [state, setState] = useState<Transaction[]>(items);
+
+    useEffect(() => {
+        setItemsRef = setState;
+        return () => {
+            setItemsRef = null;
+        };
+    }, []);
+
+    return <TransactionList items={state} />;
+}
+
+describe('TransactionList delete confirm', () => {
     beforeEach(() => {
-        localStorage.clear();
-        localStorage.setItem(
-            TRANSACTIONS_STORAGE_KEY,
-            JSON.stringify([
-                {
-                    id: 'tx-1',
-                    type: 'expense',
-                    amountCents: 1234,
-                    category: 'Food',
-                    date: '2026-01-02',
-                    description: 'Groceries'
-                }
-            ])
+        mutateMock.mockClear();
+    });
+
+    it('deletes when user confirms', async () => {
+        const user = userEvent.setup();
+
+        renderWithProviders(<Host items={[initialTx]} />);
+
+        const txCard = screen.getByRole('region', {
+            name: /transaction list/i
+        });
+        const tx = within(txCard);
+
+        expect(tx.getByText('$12.34')).toBeInTheDocument();
+
+        const deleteBtn = tx.getByLabelText(/delete transaction/i);
+        deleteBtn.focus();
+        await user.click(deleteBtn);
+
+        await user.click(
+            await tx.findByRole('button', { name: /^delete$/i })
         );
+
+        expect(mutateMock).toHaveBeenCalledTimes(1);
+        expect(mutateMock).toHaveBeenCalledWith('tx-1');
+
+        await waitFor(() => {
+            expect(tx.queryByText('$12.34')).not.toBeInTheDocument();
+        });
     });
 
-    it('deletes a transaction after inline confirmation', async () => {
+    it('does not call delete when user cancels', async () => {
         const user = userEvent.setup();
 
-        renderWithProviders(<DashboardPage />);
+        renderWithProviders(<Host items={[initialTx]} />);
 
-        const txListHeading = screen.getByRole('heading', {
+        const txCard = screen.getByRole('region', {
             name: /transaction list/i
         });
-        const txListCard = txListHeading.closest('div')
-            ?.parentElement as HTMLElement;
-        const txList = within(txListCard);
+        const tx = within(txCard);
 
-        // Ensure visible
-        expect(await txList.findByText('$12.34')).toBeInTheDocument();
+        expect(tx.getByText('$12.34')).toBeInTheDocument();
 
-        // Open confirm (keyboard path)
-        const deleteXBtn = txList.getByRole('button', {
-            name: /delete transaction/i
-        });
-        deleteXBtn.focus();
-        await user.keyboard('{Enter}');
+        const deleteBtn = tx.getByLabelText(/delete transaction/i);
+        deleteBtn.focus();
+        await user.click(deleteBtn);
 
-        // Confirm UI should appear
-        const confirmDeleteBtn = await txList.findByRole('button', {
-            name: /^delete$/i
-        });
+        await user.click(
+            await tx.findByRole('button', { name: /^cancel$/i })
+        );
 
-        await user.click(confirmDeleteBtn);
+        expect(mutateMock).not.toHaveBeenCalled();
 
-        // Removed optimistically
-        expect(txList.queryByText('$12.34')).not.toBeInTheDocument();
-        expect(
-            txList.queryByText('Groceries')
-        ).not.toBeInTheDocument();
-        expect(
-            txList.queryByText('2026-01-02')
-        ).not.toBeInTheDocument();
-    });
-
-    it('does not delete if user cancels inline confirmation', async () => {
-        const user = userEvent.setup();
-
-        renderWithProviders(<DashboardPage />);
-
-        const txListHeading = screen.getByRole('heading', {
-            name: /transaction list/i
-        });
-        const txListCard = txListHeading.closest('div')
-            ?.parentElement as HTMLElement;
-        const txList = within(txListCard);
-
-        expect(await txList.findByText('$12.34')).toBeInTheDocument();
-
-        // Open confirm
-        const deleteXBtn = txList.getByRole('button', {
-            name: /delete transaction/i
-        });
-        deleteXBtn.focus();
-        await user.keyboard('{Enter}');
-
-        // Click Cancel
-        const cancelBtn = await txList.findByRole('button', {
-            name: /^cancel$/i
-        });
-        await user.click(cancelBtn);
-
-        // Still there
-        expect(txList.getByText('$12.34')).toBeInTheDocument();
-        expect(txList.getByText('Groceries')).toBeInTheDocument();
-        expect(txList.getByText('2026-01-02')).toBeInTheDocument();
+        // item still there
+        expect(tx.getByText('$12.34')).toBeInTheDocument();
+        expect(tx.getByText('Groceries')).toBeInTheDocument();
+        expect(tx.getByText('2026-01-02')).toBeInTheDocument();
     });
 });

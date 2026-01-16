@@ -1,6 +1,6 @@
 import { formatCents } from '@/shared/lib/money/money';
 import clsx from 'clsx';
-import { useEffect, useState, type FC } from 'react';
+import { useId, useRef, useState, type FC } from 'react';
 import type { Transaction } from '../../model/types';
 import cls from './TransactionItem.module.scss';
 
@@ -18,6 +18,10 @@ export const TransactionItem: FC<TransactionItemProps> = ({
     isDeleting
 }) => {
     const [isConfirming, setIsConfirming] = useState(false);
+
+    const confirmId = useId();
+    const deleteBtnRef = useRef<HTMLButtonElement | null>(null);
+    const cancelBtnRef = useRef<HTMLButtonElement | null>(null);
 
     const isOptimistic = transaction.id.startsWith('optimistic-');
     const isDeleteDisabled = isOptimistic || isDeleting;
@@ -37,17 +41,12 @@ export const TransactionItem: FC<TransactionItemProps> = ({
         setIsConfirming(false);
     };
 
-    useEffect(() => {
-        if (!isConfirming) return;
-
-        const onKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') handleCancel();
-        };
-
-        window.addEventListener('keydown', onKeyDown);
-        return () => window.removeEventListener('keydown', onKeyDown);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isConfirming, isDeleting]);
+    const onConfirmKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            handleCancel();
+        }
+    };
 
     return (
         <div className={clsx(cls.item, className)}>
@@ -69,6 +68,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
                     </div>
 
                     <button
+                        ref={deleteBtnRef}
                         type="button"
                         className={clsx(
                             cls.deleteButton,
@@ -78,8 +78,10 @@ export const TransactionItem: FC<TransactionItemProps> = ({
                                 cls.hidden
                         )}
                         onClick={openConfirm}
-                        disabled={isOptimistic || isDeleting}
+                        disabled={isDeleteDisabled}
                         aria-label="Delete transaction"
+                        aria-expanded={isConfirming}
+                        aria-controls={confirmId}
                         title="Delete"
                     >
                         ×
@@ -100,14 +102,17 @@ export const TransactionItem: FC<TransactionItemProps> = ({
 
             {isConfirming && (
                 <div
+                    id={confirmId}
                     className={cls.confirmRow}
                     role="group"
                     aria-label="Confirm delete"
+                    onKeyDown={onConfirmKeyDown}
                 >
                     <span className={cls.confirmText}>Delete?</span>
 
                     <div className={cls.confirmActions}>
                         <button
+                            ref={cancelBtnRef}
                             type="button"
                             className={cls.confirmCancel}
                             onClick={handleCancel}

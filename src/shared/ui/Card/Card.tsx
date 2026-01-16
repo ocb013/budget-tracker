@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import type { FC, ReactNode } from 'react';
+import { type FC, type ReactNode, useId } from 'react';
 import cls from './Card.module.scss';
 
 interface CardProps {
@@ -7,22 +7,38 @@ interface CardProps {
     title?: string;
     rightSlot?: ReactNode;
     children: ReactNode;
+    titleId?: string;
 }
 
 export const Card: FC<CardProps> = ({
     className,
     title,
     rightSlot,
-    children
+    children,
+    titleId
 }) => {
-    const hasHeader = rightSlot || title;
+    const autoId = useId();
+    const resolvedTitleId = title
+        ? titleId ?? `card-title-${autoId}`
+        : undefined;
+
+    const hasHeader = Boolean(rightSlot || title);
 
     return (
-        <div className={clsx(cls.card, className)}>
+        <section
+            className={clsx(cls.card, className)}
+            role="region"
+            aria-labelledby={resolvedTitleId}
+        >
             {hasHeader && (
                 <div className={cls.header}>
                     {title && (
-                        <h2 className={cls.cardTitle}>{title}</h2>
+                        <h2
+                            id={resolvedTitleId}
+                            className={cls.cardTitle}
+                        >
+                            {title}
+                        </h2>
                     )}
                     {rightSlot && (
                         <div className={cls.rightSlot}>
@@ -31,7 +47,8 @@ export const Card: FC<CardProps> = ({
                     )}
                 </div>
             )}
+
             {children}
-        </div>
+        </section>
     );
 };
