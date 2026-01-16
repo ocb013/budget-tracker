@@ -44,7 +44,8 @@ describe('AddTransaction flow', () => {
             name: /transaction list/i
         });
 
-        const txListCard = txListHeading.parentElement;
+        const txListCard =
+            txListHeading.closest('div')?.parentElement;
         expect(txListCard).toBeTruthy();
 
         const txList = within(txListCard as HTMLElement);

@@ -39,7 +39,8 @@ describe('DeleteTransaction flow', () => {
         const txListHeading = screen.getByRole('heading', {
             name: /transaction list/i
         });
-        const txListCard = txListHeading.parentElement as HTMLElement;
+        const txListCard = txListHeading.closest('div')
+            ?.parentElement as HTMLElement;
         const txList = within(txListCard);
 
         // Ensure visible
@@ -53,7 +54,6 @@ describe('DeleteTransaction flow', () => {
         await user.keyboard('{Enter}');
 
         // Confirm UI should appear
-        // (Either the "Delete?" text or the "Delete" button—depending on your UI)
         const confirmDeleteBtn = await txList.findByRole('button', {
             name: /^delete$/i
         });
@@ -62,7 +62,12 @@ describe('DeleteTransaction flow', () => {
 
         // Removed optimistically
         expect(txList.queryByText('$12.34')).not.toBeInTheDocument();
-        expect(txList.queryByText('Food')).not.toBeInTheDocument();
+        expect(
+            txList.queryByText('Groceries')
+        ).not.toBeInTheDocument();
+        expect(
+            txList.queryByText('2026-01-02')
+        ).not.toBeInTheDocument();
     });
 
     it('does not delete if user cancels inline confirmation', async () => {
@@ -73,7 +78,8 @@ describe('DeleteTransaction flow', () => {
         const txListHeading = screen.getByRole('heading', {
             name: /transaction list/i
         });
-        const txListCard = txListHeading.parentElement as HTMLElement;
+        const txListCard = txListHeading.closest('div')
+            ?.parentElement as HTMLElement;
         const txList = within(txListCard);
 
         expect(await txList.findByText('$12.34')).toBeInTheDocument();
@@ -93,6 +99,7 @@ describe('DeleteTransaction flow', () => {
 
         // Still there
         expect(txList.getByText('$12.34')).toBeInTheDocument();
-        expect(txList.getByText('Food')).toBeInTheDocument();
+        expect(txList.getByText('Groceries')).toBeInTheDocument();
+        expect(txList.getByText('2026-01-02')).toBeInTheDocument();
     });
 });
