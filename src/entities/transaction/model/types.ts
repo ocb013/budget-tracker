@@ -32,3 +32,10 @@ export type TypeFilter =
     (typeof FILTER_TYPES)[keyof typeof FILTER_TYPES];
 
 export type CategoryFilter = (typeof CATEGORY_FILTERS)[number];
+
+// for persistent storage
+export type TransactionListPrefs = {
+    sort: SortMode;
+    typeFilter: TypeFilter;
+    categoryFilter: CategoryFilter;
+};

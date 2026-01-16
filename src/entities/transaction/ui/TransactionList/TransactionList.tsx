@@ -1,19 +1,29 @@
 import clsx from 'clsx';
-import { useMemo, useState, type FC, type ReactNode } from 'react';
+import {
+    useEffect,
+    useMemo,
+    useState,
+    type FC,
+    type ReactNode
+} from 'react';
 import cls from './TransactionList.module.scss';
 
 import { useDeleteTransactionMutation } from '@/shared/api/queries/transactions';
 
-import { CATEGORY_FILTERS, FILTER_TYPES } from '../../model/consts';
+import { FILTER_TYPES } from '../../model/consts';
 import {
     type CategoryFilter,
     type SortMode,
     type Transaction,
+    type TransactionListPrefs,
     type TypeFilter
 } from '../../model/types';
 
+import { LIST_PREFS_STORAGE_KEY } from '@/shared/constants/storage';
+import { writeJson } from '@/shared/lib/storage/storage';
 import { Card } from '@/shared/ui/Card/Card';
 import { Skeleton } from '@/shared/ui/Skeleton/Skeleton';
+import { readListPrefs } from '../../lib/storage';
 import { TransactionFilters } from '../TransactionFilters/TransactionFilters';
 import { TransactionItem } from '../TransactionItem/TransactionItem';
 import { TransactionSortToggle } from '../TransactionSortToggle/TransactionSortToggle';
@@ -56,13 +66,22 @@ export const TransactionList: FC<TransactionListProps> = ({
 
     const deletingId = isPending ? variables : undefined;
 
-    const [sort, setSort] = useState<SortMode>('date');
-    const [typeFilter, setTypeFilter] = useState<TypeFilter>(
-        FILTER_TYPES.ALL
-    );
+    const initialPrefs = useMemo(() => readListPrefs(), []);
 
+    const [sort, setSort] = useState<SortMode>(initialPrefs.sort);
+    const [typeFilter, setTypeFilter] = useState<TypeFilter>(
+        initialPrefs.typeFilter
+    );
     const [categoryFilter, setCategoryFilter] =
-        useState<CategoryFilter>(CATEGORY_FILTERS[0]);
+        useState<CategoryFilter>(initialPrefs.categoryFilter);
+
+    useEffect(() => {
+        writeJson<TransactionListPrefs>(LIST_PREFS_STORAGE_KEY, {
+            sort,
+            categoryFilter,
+            typeFilter
+        });
+    }, [categoryFilter, sort, typeFilter]);
 
     const filteredItems = useMemo(() => {
         let result = items;
@@ -108,7 +127,7 @@ export const TransactionList: FC<TransactionListProps> = ({
                 No transactions yet. Add your first one.
             </div>
         );
-    } else if (visibleItems?.length === 0 || !visibleItems) {
+    } else if (visibleItems.length === 0) {
         content = (
             <div className={cls.noResults}>
                 <div className={cls.noResultsRow}>

@@ -3,7 +3,12 @@ import type {
     Transaction
 } from '@/entities/transaction';
 import { sortByDateDesc } from '../lib/transaction/sortByDateDesc';
-import { delay, readJson, writeJson } from './storage';
+import { readJson, writeJson } from '../lib/storage/storage';
+
+// small async delay to simulate network
+export async function delay(ms: number): Promise<void> {
+    await new Promise((res) => setTimeout(res, ms));
+}
 
 const STORAGE_KEY = 'budget-tracker:transactions';
 const NETWORK_DELAY_MS = 250;
