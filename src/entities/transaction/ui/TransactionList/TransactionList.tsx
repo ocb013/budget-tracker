@@ -75,6 +75,11 @@ export const TransactionList: FC<TransactionListProps> = ({
     const [categoryFilter, setCategoryFilter] =
         useState<CategoryFilter>(initialPrefs.categoryFilter);
 
+    const clearFilters = () => {
+        setCategoryFilter('all');
+        setTypeFilter(FILTER_TYPES.ALL);
+    };
+
     useEffect(() => {
         writeJson<TransactionListPrefs>(LIST_PREFS_STORAGE_KEY, {
             sort,
@@ -138,12 +143,10 @@ export const TransactionList: FC<TransactionListProps> = ({
                     <button
                         type="button"
                         className={cls.clearButton}
-                        onClick={() => {
-                            setCategoryFilter('all');
-                            setTypeFilter(FILTER_TYPES.ALL);
-                        }}
+                        aria-label="Clear filters"
+                        onClick={clearFilters}
                     >
-                        Clear
+                        Clear filters
                     </button>
                 </div>
             </div>

@@ -35,7 +35,7 @@ export type CategoryFilter = (typeof CATEGORY_FILTERS)[number];
 
 // for persistent storage
 export type TransactionListPrefs = {
-    sort: SortMode;
-    typeFilter: TypeFilter;
-    categoryFilter: CategoryFilter;
+    sort?: SortMode;
+    typeFilter?: TypeFilter;
+    categoryFilter?: CategoryFilter;
 };

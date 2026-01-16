@@ -34,11 +34,16 @@ export const TransactionFilters: FC<TransactionFiltersProps> = ({
     };
 
     return (
-        <div className={clsx(cls.transactionFilters, className)}>
+        <div
+            className={clsx(cls.transactionFilters, className)}
+            role="group"
+            aria-label="Filter transactions"
+        >
             <select
                 className={cls.select}
                 value={typeValue}
                 onChange={handleTypeChange}
+                aria-label="Transaction type"
             >
                 {TYPE_FILTER_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -50,6 +55,7 @@ export const TransactionFilters: FC<TransactionFiltersProps> = ({
                 className={cls.select}
                 value={categoryValue}
                 onChange={handleCategoryChange}
+                aria-label="Transaction category"
             >
                 {CATEGORY_FILTER_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
