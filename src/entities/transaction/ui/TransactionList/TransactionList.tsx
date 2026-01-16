@@ -1,12 +1,22 @@
-import { useDeleteTransactionMutation } from '@/shared/api/queries/transactions';
-import { Card } from '@/shared/ui/Card/Card';
-import { Skeleton } from '@/shared/ui/Skeleton/Skeleton';
 import clsx from 'clsx';
 import { useMemo, useState, type FC, type ReactNode } from 'react';
-import type { SortMode, Transaction } from '../../model/types';
+import cls from './TransactionList.module.scss';
+
+import { useDeleteTransactionMutation } from '@/shared/api/queries/transactions';
+
+import { CATEGORY_FILTERS, FILTER_TYPES } from '../../model/consts';
+import {
+    type CategoryFilter,
+    type SortMode,
+    type Transaction,
+    type TypeFilter
+} from '../../model/types';
+
+import { Card } from '@/shared/ui/Card/Card';
+import { Skeleton } from '@/shared/ui/Skeleton/Skeleton';
+import { TransactionFilters } from '../TransactionFilters/TransactionFilters';
 import { TransactionItem } from '../TransactionItem/TransactionItem';
 import { TransactionSortToggle } from '../TransactionSortToggle/TransactionSortToggle';
-import cls from './TransactionList.module.scss';
 
 interface TransactionListProps {
     isLoading?: boolean;
@@ -15,7 +25,7 @@ interface TransactionListProps {
     height?: number;
 }
 
-function TransactionListSkeleton() {
+const TransactionListSkeleton = () => {
     return (
         <div className={cls.list}>
             {Array.from({ length: 7 }).map((_, i) => (
@@ -33,7 +43,7 @@ function TransactionListSkeleton() {
             ))}
         </div>
     );
-}
+};
 
 export const TransactionList: FC<TransactionListProps> = ({
     isLoading,
@@ -47,33 +57,82 @@ export const TransactionList: FC<TransactionListProps> = ({
     const deletingId = isPending ? variables : undefined;
 
     const [sort, setSort] = useState<SortMode>('date');
+    const [typeFilter, setTypeFilter] = useState<TypeFilter>(
+        FILTER_TYPES.ALL
+    );
 
-    const sortedItems = useMemo(() => {
-        if (sort === 'date') {
-            return items;
+    const [categoryFilter, setCategoryFilter] =
+        useState<CategoryFilter>(CATEGORY_FILTERS[0]);
+
+    const filteredItems = useMemo(() => {
+        let result = items;
+
+        if (typeFilter !== FILTER_TYPES.ALL) {
+            result = result.filter(
+                (item) => item.type === typeFilter
+            );
         }
 
-        return [...items].sort((a, b) => {
+        if (categoryFilter !== 'all') {
+            result = result.filter(
+                (item) => item.category === categoryFilter
+            );
+        }
+
+        return result;
+    }, [items, typeFilter, categoryFilter]);
+
+    const visibleItems = useMemo(() => {
+        if (sort === 'date') {
+            return filteredItems;
+        }
+
+        return [...filteredItems].sort((a, b) => {
             const diff = b.amountCents - a.amountCents;
             if (diff !== 0) return diff;
             return b.date.localeCompare(a.date);
         });
-    }, [items, sort]);
+    }, [filteredItems, sort]);
+
+    const rightSlot = (
+        <TransactionSortToggle value={sort} onChange={setSort} />
+    );
 
     let content: ReactNode;
 
     if (isLoading) {
         content = <TransactionListSkeleton />;
-    } else if (sortedItems.length === 0) {
+    } else if (items.length === 0) {
         content = (
             <div className={cls.emptyState}>
                 No transactions yet. Add your first one.
             </div>
         );
+    } else if (visibleItems?.length === 0 || !visibleItems) {
+        content = (
+            <div className={cls.noResults}>
+                <div className={cls.noResultsRow}>
+                    <span className={cls.noResultsText}>
+                        No results. Try clearing filters.
+                    </span>
+
+                    <button
+                        type="button"
+                        className={cls.clearButton}
+                        onClick={() => {
+                            setCategoryFilter('all');
+                            setTypeFilter(FILTER_TYPES.ALL);
+                        }}
+                    >
+                        Clear
+                    </button>
+                </div>
+            </div>
+        );
     } else {
         content = (
             <div className={cls.list}>
-                {sortedItems.map((item) => (
+                {visibleItems.map((item) => (
                     <TransactionItem
                         transaction={item}
                         key={item.id}
@@ -85,10 +144,6 @@ export const TransactionList: FC<TransactionListProps> = ({
         );
     }
 
-    const rightSlot = (
-        <TransactionSortToggle value={sort} onChange={setSort} />
-    );
-
     return (
         <div
             className={clsx(cls.wrapper, className)}
@@ -99,6 +154,14 @@ export const TransactionList: FC<TransactionListProps> = ({
                 rightSlot={rightSlot}
                 className={cls.transactionList}
             >
+                <div className={cls.filtersRow}>
+                    <TransactionFilters
+                        typeValue={typeFilter}
+                        onTypeChange={setTypeFilter}
+                        categoryValue={categoryFilter}
+                        onCategoryChange={setCategoryFilter}
+                    />
+                </div>
                 <div className={cls.scrollArea}>{content}</div>
             </Card>
         </div>

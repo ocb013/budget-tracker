@@ -1,0 +1,30 @@
+.transactionFilters {
+    display: flex;
+    gap: var(--s-2);
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.select {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: var(--r-sm);
+    padding: 8px 10px;
+    font: var(--font-s);
+    line-height: 1;
+    cursor: pointer;
+    min-width: 140px;
+}
+
+.select:focus-visible {
+    outline: 1px solid var(--border);
+}
+
+@media (max-width: 420px) {
+    .select {
+        width: 100%;
+        min-width: 0;
+    }
+}

@@ -5,9 +5,10 @@ import type {
     TransactionCategory,
     TransactionType
 } from '@/entities/transaction';
-import { transactionCategories } from './categories';
+
 import type { AddTransactionFormErrors } from './types';
 
+import { TRANSACTION_CATEGORIES } from '@/entities/transaction';
 import { useAddTransactionMutation } from '@/shared/api/queries/transactions';
 import { todayISO } from '@/shared/lib/date';
 import { parseAmountToCents } from '@/shared/lib/money/money';
@@ -25,7 +26,7 @@ type AddTransactionFormState = {
 const initialFormState: AddTransactionFormState = {
     type: 'expense',
     amount: '',
-    category: transactionCategories[0],
+    category: TRANSACTION_CATEGORIES[0],
     date: todayISO(),
     description: ''
 };

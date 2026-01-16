@@ -1,15 +1,13 @@
+import type {
+    CATEGORY_FILTERS,
+    FILTER_TYPES,
+    TRANSACTION_CATEGORIES
+} from './consts';
+
 export type TransactionType = 'income' | 'expense';
 
 export type TransactionCategory =
-    | 'Salary'
-    | 'Freelance'
-    | 'Food'
-    | 'Transport'
-    | 'Rent'
-    | 'Health'
-    | 'Shopping'
-    | 'Entertainment'
-    | 'Other';
+    (typeof TRANSACTION_CATEGORIES)[number];
 
 export interface Transaction {
     id: string;
@@ -29,3 +27,8 @@ export interface Totals {
 }
 
 export type SortMode = 'date' | 'amount';
+
+export type TypeFilter =
+    (typeof FILTER_TYPES)[keyof typeof FILTER_TYPES];
+
+export type CategoryFilter = (typeof CATEGORY_FILTERS)[number];

@@ -2,8 +2,8 @@ import clsx from 'clsx';
 import { useRef, type ChangeEvent, type FC } from 'react';
 import cls from './AddTransactionForm.module.scss';
 
+import { TRANSACTION_CATEGORIES } from '@/entities/transaction';
 import { Card } from '@/shared/ui/Card/Card';
-import { transactionCategories } from '../../model/categories';
 import { useAddTransactionForm } from '../../model/useAddTransactionForm';
 
 interface AddTransactionFormProps {
@@ -94,7 +94,7 @@ export const AddTransactionForm: FC<AddTransactionFormProps> = ({
                 <div className={cls.field}>
                     <span className={cls.label}>Category</span>
                     <div className={cls.categories}>
-                        {transactionCategories.map((c) => (
+                        {TRANSACTION_CATEGORIES.map((c) => (
                             <button
                                 key={c}
                                 type="button"
