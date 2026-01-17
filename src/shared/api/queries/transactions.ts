@@ -1,6 +1,7 @@
 import type {
     NewTransactionInput,
-    Transaction
+    Transaction,
+    UpdateTransactionInput
 } from '@/entities/transaction/model/types';
 import { sortByDateDesc } from '@/shared/lib/transaction/sortByDateDesc';
 import {
@@ -11,7 +12,8 @@ import {
 import {
     addTransaction,
     deleteTransaction,
-    getTransactions
+    getTransactions,
+    updateTransaction
 } from '../transactions';
 
 export const transactionsKeys = {
@@ -73,6 +75,78 @@ export function useAddTransactionMutation() {
                     return sortByDateDesc(
                         items.map((t) =>
                             t.id === ctx.optimisticId ? serverTx : t
+                        )
+                    );
+                }
+            );
+        },
+
+        onSettled: async () => {
+            await qc.invalidateQueries({
+                queryKey: transactionsKeys.all
+            });
+        }
+    });
+}
+
+type UpdateTxVars = { id: string; patch: UpdateTransactionInput };
+
+export function useUpdateTransactionMutation() {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, patch }: UpdateTxVars) =>
+            updateTransaction(id, patch),
+
+        onMutate: async ({ id, patch }) => {
+            await qc.cancelQueries({
+                queryKey: transactionsKeys.all
+            });
+
+            const prev = qc.getQueryData<Transaction[]>(
+                transactionsKeys.all
+            );
+
+            const prevTx = prev?.find((tx) => tx.id === id);
+
+            if (!prevTx) {
+                return { prev };
+            }
+
+            const optimisticTx: Transaction = {
+                ...prevTx,
+                ...patch
+            };
+
+            qc.setQueryData<Transaction[]>(
+                transactionsKeys.all,
+                (old) => {
+                    const items = old ?? [];
+                    return sortByDateDesc(
+                        items.map((t) =>
+                            t.id === id ? optimisticTx : t
+                        )
+                    );
+                }
+            );
+
+            return { prev };
+        },
+
+        onError: (_err, _vars, ctx) => {
+            if (ctx?.prev) {
+                qc.setQueryData(transactionsKeys.all, ctx.prev);
+            }
+        },
+
+        onSuccess: (serverTx) => {
+            qc.setQueryData<Transaction[]>(
+                transactionsKeys.all,
+                (old) => {
+                    const items = old ?? [];
+                    return sortByDateDesc(
+                        items.map((t) =>
+                            t.id === serverTx.id ? serverTx : t
                         )
                     );
                 }

@@ -12,6 +12,21 @@
     padding-top: 0;
 }
 
+.itemWrapper {
+    display: flex;
+    flex-direction: row;
+
+    gap: var(--s-2);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-3) 0;
+    gap: var(--s-2);
+    flex: 1;
+}
+
 .topRow {
     display: flex;
     align-items: baseline;
@@ -44,47 +59,60 @@
     color: var(--danger, #b42318);
 }
 
-.deleteButton {
-    appearance: none;
-    border: none;
-    background: transparent;
-    color: var(--muted);
-
-    width: 28px;
-    height: 28px;
-    display: grid;
-    place-items: center;
-
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    border-radius: var(--r-sm);
-
+.actionButtons {
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.15s ease, color 0.15s ease,
+    transition:
+        opacity 0.15s ease,
+        color 0.15s ease,
         background-color 0.15s ease;
 
-    &.hidden {
-        visibility: hidden;
+    display: flex;
+    gap: var(--s-1);
+    flex-direction: column;
+
+    button {
+        appearance: none;
+        border: none;
+        background: transparent;
+        color: var(--muted);
+
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+        border-radius: var(--r-sm);
+
+        &.hidden {
+            visibility: hidden;
+        }
     }
 }
 
-.item:hover .deleteButton,
-.item:focus-within .deleteButton,
-.deleteButton:focus-visible {
+.item:hover .actionButtons,
+.item:focus-within .actionButtons {
     opacity: 1;
     visibility: visible;
 }
 
 .deleteButton:hover {
-    color: var(--danger, #b42318);
+    color: var(--danger);
     background: rgba(180, 35, 24, 0.08);
 }
 
-.deleteButton:focus-visible {
+.editButton:hover {
+    color: var(--success);
+    background: rgba(90, 158, 117, 0.08);
+}
+
+.deleteButton:focus-visible,
+.editButton:focus-visible {
     outline: 1px solid var(--border);
-    outline-offset: 2px;
+    outline-offset: 1px;
 }
 
 .bottomRow {
@@ -94,8 +122,6 @@
     gap: var(--s-3);
     color: var(--muted);
     font-size: 14px;
-
-    padding-right: calc(28px + var(--s-2));
 }
 
 .metaLeft {
@@ -103,6 +129,12 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     min-width: 0;
+}
+
+.description {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    font-size: 14px;
 }
 
 .date {
@@ -138,7 +170,8 @@
 }
 
 .confirmCancel,
-.confirmDelete {
+.confirmDelete,
+.confirmEdit {
     border: 1px solid var(--border);
     background: transparent;
     color: var(--text);
@@ -156,10 +189,19 @@
 .confirmDelete {
     border-color: rgba(180, 35, 24, 0.35);
     color: var(--danger, #b42318);
+
+    &:hover {
+        background: rgba(180, 35, 24, 0.08);
+    }
 }
 
-.confirmDelete:hover {
-    background: rgba(180, 35, 24, 0.08);
+.confirmEdit {
+    border-color: rgba(90, 158, 117, 0.35);
+    color: var(--success,);
+
+    &:hover {
+        background: rgba(90, 158, 117, 0.08);
+    }
 }
 
 .confirmCancel:disabled,

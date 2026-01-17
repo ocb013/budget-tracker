@@ -1,8 +1,14 @@
 import { formatCents } from '@/shared/lib/money/money';
 import clsx from 'clsx';
-import { useId, useRef, useState, type FC } from 'react';
+import { useEffect, useId, useRef, useState, type FC } from 'react';
 import type { Transaction } from '../../model/types';
 import cls from './TransactionItem.module.scss';
+
+const TRANSACTION_MODES = {
+    IDLE: 'idle',
+    DELETE: 'delete',
+    EDIT: 'edit'
+} as const;
 
 interface TransactionItemProps {
     className?: string;
@@ -17,28 +23,38 @@ export const TransactionItem: FC<TransactionItemProps> = ({
     onDelete,
     isDeleting
 }) => {
-    const [isConfirming, setIsConfirming] = useState(false);
+    const [mode, setMode] = useState<
+        (typeof TRANSACTION_MODES)[keyof typeof TRANSACTION_MODES]
+    >(TRANSACTION_MODES.IDLE);
 
     const confirmId = useId();
-    const deleteBtnRef = useRef<HTMLButtonElement | null>(null);
-    const cancelBtnRef = useRef<HTMLButtonElement | null>(null);
 
     const isOptimistic = transaction.id.startsWith('optimistic-');
     const isDeleteDisabled = isOptimistic || isDeleting;
 
-    const openConfirm = () => {
+    const panelRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (mode !== 'idle') panelRef.current?.focus();
+    }, [mode]);
+
+    const openDelete = () => {
         if (isDeleteDisabled) return;
-        setIsConfirming(true);
+        setMode(TRANSACTION_MODES.DELETE);
     };
 
-    const handleConfirm = () => {
+    const openEdit = () => {
+        setMode(TRANSACTION_MODES.EDIT);
+    };
+
+    const handleDelete = () => {
         if (isDeleteDisabled) return;
         onDelete(transaction.id);
     };
 
     const handleCancel = () => {
         if (isDeleting) return;
-        setIsConfirming(false);
+        setMode(TRANSACTION_MODES.IDLE);
     };
 
     const onConfirmKeyDown = (e: React.KeyboardEvent) => {
@@ -48,71 +64,119 @@ export const TransactionItem: FC<TransactionItemProps> = ({
         }
     };
 
+    const handleConfirm = () => {
+        if (mode === TRANSACTION_MODES.DELETE) {
+            handleDelete();
+        }
+    };
+
+    const buttonText =
+        mode === TRANSACTION_MODES.DELETE
+            ? isDeleting
+                ? 'Deleting…'
+                : 'Delete'
+            : mode === TRANSACTION_MODES.EDIT
+              ? isDeleting
+                  ? 'Saving…'
+                  : 'Save'
+              : '';
+
     return (
         <div className={clsx(cls.item, className)}>
-            <div className={cls.topRow}>
-                <div className={cls.category}>
-                    {transaction.category}
-                </div>
+            <div className={cls.itemWrapper}>
+                <div className={cls.content}>
+                    <div className={cls.topRow}>
+                        <div className={cls.category}>
+                            {transaction.category}
+                        </div>
 
-                <div className={cls.right}>
-                    <div
-                        className={clsx(cls.amount, {
-                            [cls.income]:
-                                transaction.type === 'income',
-                            [cls.expense]:
-                                transaction.type === 'expense'
-                        })}
-                    >
-                        {formatCents(transaction.amountCents)}
+                        <div className={cls.right}>
+                            <div
+                                className={clsx(cls.amount, {
+                                    [cls.income]:
+                                        transaction.type === 'income',
+                                    [cls.expense]:
+                                        transaction.type === 'expense'
+                                })}
+                            >
+                                {formatCents(transaction.amountCents)}
+                            </div>
+                        </div>
                     </div>
-
+                    <div className={cls.bottomRow}>
+                        <div className={cls.metaLeft}>
+                            {transaction.type === 'income'
+                                ? 'Income'
+                                : 'Expense'}
+                        </div>
+                        <div className={cls.date}>
+                            {transaction.date}
+                        </div>
+                    </div>
+                    {transaction.description?.trim() && (
+                        <div className={cls.description}>
+                            {transaction.description}
+                        </div>
+                    )}
+                </div>
+                <div className={cls.actionButtons}>
                     <button
-                        ref={deleteBtnRef}
                         type="button"
                         className={clsx(
                             cls.deleteButton,
-                            (isOptimistic ||
-                                isDeleting ||
-                                isConfirming) &&
+                            (isDeleteDisabled ||
+                                mode !== TRANSACTION_MODES.IDLE) &&
                                 cls.hidden
                         )}
-                        onClick={openConfirm}
+                        onClick={openDelete}
                         disabled={isDeleteDisabled}
                         aria-label="Delete transaction"
-                        aria-expanded={isConfirming}
+                        aria-expanded={mode === 'delete'}
                         aria-controls={confirmId}
                         title="Delete"
                     >
                         ×
                     </button>
+                    <button
+                        type="button"
+                        className={clsx(
+                            cls.editButton,
+                            (isOptimistic ||
+                                mode !== TRANSACTION_MODES.IDLE) &&
+                                cls.hidden
+                        )}
+                        onClick={openEdit}
+                        aria-label="Edit transaction"
+                        title="Edit"
+                    >
+                        e
+                    </button>
                 </div>
             </div>
 
-            <div className={cls.bottomRow}>
-                <div className={cls.metaLeft}>
-                    {transaction.description?.trim()
-                        ? transaction.description
-                        : transaction.type === 'income'
-                        ? 'Income'
-                        : 'Expense'}
-                </div>
-                <div className={cls.date}>{transaction.date}</div>
-            </div>
-
-            {isConfirming && (
+            {mode !== TRANSACTION_MODES.IDLE && (
                 <div
                     id={confirmId}
                     className={cls.confirmRow}
                     role="group"
-                    aria-label="Confirm delete"
+                    aria-label={
+                        mode === TRANSACTION_MODES.DELETE
+                            ? 'Confirm delete'
+                            : 'Confirm save'
+                    }
+                    tabIndex={-1}
                     onKeyDown={onConfirmKeyDown}
+                    ref={panelRef}
                 >
-                    <span className={cls.confirmText}>Delete?</span>
+                    <span className={cls.confirmText}>
+                        {mode === TRANSACTION_MODES.DELETE &&
+                            'Delete transaction ?'}
+                        {mode === TRANSACTION_MODES.EDIT &&
+                            'Edit transaction'}
+                    </span>
 
                     <div className={cls.confirmActions}>
                         <button
-                            ref={cancelBtnRef}
                             type="button"
                             className={cls.confirmCancel}
                             onClick={handleCancel}
@@ -123,11 +187,15 @@ export const TransactionItem: FC<TransactionItemProps> = ({
 
                         <button
                             type="button"
-                            className={cls.confirmDelete}
+                            className={
+                                mode === TRANSACTION_MODES.DELETE
+                                    ? cls.confirmDelete
+                                    : cls.confirmEdit
+                            }
                             onClick={handleConfirm}
                             disabled={isDeleteDisabled}
                         >
-                            {isDeleting ? 'Deleting…' : 'Delete'}
+                            {buttonText}
                         </button>
                     </div>
                 </div>

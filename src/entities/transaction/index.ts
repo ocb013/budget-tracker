@@ -8,5 +8,6 @@ export type {
     NewTransactionInput,
     Transaction,
     TransactionCategory,
-    TransactionType
+    TransactionType,
+    UpdateTransactionInput
 } from './model/types';
