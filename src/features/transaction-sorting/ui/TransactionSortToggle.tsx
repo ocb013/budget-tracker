@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import type { FC } from 'react';
-import type { SortMode } from '../../model/types';
+
+import type { SortMode } from '../model/types';
 import cls from './TransactionSortToggle.module.scss';
 
 interface TransactionSortToggleProps {

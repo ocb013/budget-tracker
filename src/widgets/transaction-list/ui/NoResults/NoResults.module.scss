@@ -1,0 +1,40 @@
+.noResults {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.noResultsRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+}
+
+.noResultsText {
+    min-width: 0;
+}
+
+.clearButton {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    border-radius: var(--r-sm);
+    padding: 6px 10px;
+    font: var(--font-s);
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.clearButton:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.clearButton:focus-visible {
+    outline: 2px solid var(--border);
+    outline-offset: 2px;
+}

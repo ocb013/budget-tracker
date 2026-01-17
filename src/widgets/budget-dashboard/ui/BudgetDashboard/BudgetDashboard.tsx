@@ -2,11 +2,12 @@ import clsx from 'clsx';
 import { useRef, type FC } from 'react';
 import cls from './BudgetDashboard.module.scss';
 
-import { getTotals, TransactionList } from '@/entities/transaction';
+import { getTotals } from '@/entities/transaction';
 import { BalanceSummary } from '@/entities/transaction/ui/BalanceSummary/BalanceSummary';
-import { AddTransactionForm } from '@/features/addTransaction';
+import { AddTransactionForm } from '@/features/add-transaction';
 import { useTransactionsQuery } from '@/shared/api/queries/transactions';
 import { useElementHeight } from '@/shared/lib/dom/useElementHeight';
+import { TransactionList } from '@/widgets/transaction-list';
 
 interface BudgetDashboardProps {
     className?: string;

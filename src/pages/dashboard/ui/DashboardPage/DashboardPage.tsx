@@ -1,4 +1,4 @@
-import { BudgetDashboard } from '@/widgets/budgetDashboard';
+import { BudgetDashboard } from '@/widgets/budget-dashboard';
 import clsx from 'clsx';
 import type { FC } from 'react';
 import cls from './DashboardPage.module.scss';
