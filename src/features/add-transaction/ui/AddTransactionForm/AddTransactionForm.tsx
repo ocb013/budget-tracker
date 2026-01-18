@@ -2,12 +2,18 @@ import clsx from 'clsx';
 import { useRef, type ChangeEvent, type FC } from 'react';
 import cls from './AddTransactionForm.module.scss';
 
-import { TRANSACTION_CATEGORIES } from '@/entities/transaction';
+import {
+    TRANSACTION_CATEGORIES,
+    type Transaction
+} from '@/entities/transaction';
 import { Card } from '@/shared/ui/Card/Card';
 import { useAddTransactionForm } from '../../model/useAddTransactionForm';
 
 interface AddTransactionFormProps {
     className?: string;
+    mode: 'add' | 'edit';
+    initialTx: Transaction | null;
+    onCancelEdit: () => void;
 }
 
 export const AddTransactionForm: FC<AddTransactionFormProps> = ({

@@ -30,16 +30,25 @@ import { TransactionListSkeleton } from '../TransactionListSkeleton/TransactionL
 
 interface TransactionListProps {
     className?: string;
-    items: Transaction[];
     height?: number;
+
+    items: Transaction[];
     isLoading?: boolean;
+
+    onEdit: (tx: Transaction) => void;
+    editingId: string | null;
+    onCancelEdit: () => void;
 }
 
 export const TransactionList: FC<TransactionListProps> = ({
     className,
     items,
     isLoading,
-    height
+    height,
+
+    onEdit,
+    editingId,
+    onCancelEdit
 }) => {
     const { mutate, isPending, variables } =
         useDeleteTransactionMutation();
@@ -53,6 +62,11 @@ export const TransactionList: FC<TransactionListProps> = ({
     );
     const [categoryFilter, setCategoryFilter] =
         useState<CategoryFilter>(initialPrefs.categoryFilter);
+
+    // ✅ only one delete panel open at a time
+    const [activeDeleteId, setActiveDeleteId] = useState<
+        string | null
+    >(null);
 
     useUpdatePrefs({ sort, typeFilter, categoryFilter });
 
@@ -87,14 +101,31 @@ export const TransactionList: FC<TransactionListProps> = ({
     } else {
         content = (
             <div className={cls.list}>
-                {visibleItems.map((item) => (
-                    <TransactionItem
-                        transaction={item}
-                        key={item.id}
-                        onDelete={mutate}
-                        isDeleting={deletingId === item.id}
-                    />
-                ))}
+                {visibleItems.map((item) => {
+                    const isDeleteOpen = activeDeleteId === item.id;
+
+                    return (
+                        <TransactionItem
+                            key={item.id}
+                            transaction={item}
+                            onDelete={mutate}
+                            isDeleting={deletingId === item.id}
+                            onEdit={onEdit}
+                            editingId={editingId}
+                            onCancelEdit={onCancelEdit}
+                            // ✅ new controlled delete-panel props
+                            isDeleteOpen={isDeleteOpen}
+                            onToggleDelete={() =>
+                                setActiveDeleteId((prev) =>
+                                    prev === item.id ? null : item.id
+                                )
+                            }
+                            onCloseDelete={() =>
+                                setActiveDeleteId(null)
+                            }
+                        />
+                    );
+                })}
             </div>
         );
     }

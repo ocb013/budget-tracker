@@ -15,7 +15,6 @@
 .itemWrapper {
     display: flex;
     flex-direction: row;
-
     gap: var(--s-2);
 }
 
@@ -52,13 +51,14 @@
 }
 
 .income {
-    color: var(--success, #1a7f37);
+    color: var(--success);
 }
 
 .expense {
-    color: var(--danger, #b42318);
+    color: var(--danger);
 }
 
+// action buttons
 .actionButtons {
     opacity: 0;
     visibility: hidden;
@@ -72,47 +72,44 @@
     flex-direction: column;
 
     button {
-        appearance: none;
-        border: none;
-        background: transparent;
-        color: var(--muted);
-
         width: 28px;
         height: 28px;
         display: grid;
         place-items: center;
-
         font-size: 18px;
         line-height: 1;
         cursor: pointer;
         border-radius: var(--r-sm);
-
-        &.hidden {
-            visibility: hidden;
-        }
     }
 }
 
 .item:hover .actionButtons,
-.item:focus-within .actionButtons {
+.actionButtonsActive {
     opacity: 1;
     visibility: visible;
 }
 
-.deleteButton:hover {
+.deleteButton,
+.editButton {
+    background: transparent;
+    color: var(--muted);
+}
+
+.hidden {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.deleteButton:not(.deleteButtonActive):hover,
+.deleteButtonActive {
     color: var(--danger);
     background: rgba(180, 35, 24, 0.08);
 }
 
-.editButton:hover {
+.editButton:not(.editButtonActive):hover,
+.editButtonActive {
     color: var(--success);
     background: rgba(90, 158, 117, 0.08);
-}
-
-.deleteButton:focus-visible,
-.editButton:focus-visible {
-    outline: 1px solid var(--border);
-    outline-offset: 1px;
 }
 
 .bottomRow {
@@ -142,8 +139,6 @@
     font-variant-numeric: tabular-nums;
 }
 
-/* Confirm UI */
-
 .confirmRow {
     display: flex;
     align-items: center;
@@ -170,8 +165,7 @@
 }
 
 .confirmCancel,
-.confirmDelete,
-.confirmEdit {
+.confirmDelete {
     border: 1px solid var(--border);
     background: transparent;
     color: var(--text);
@@ -189,19 +183,10 @@
 .confirmDelete {
     border-color: rgba(180, 35, 24, 0.35);
     color: var(--danger, #b42318);
-
-    &:hover {
-        background: rgba(180, 35, 24, 0.08);
-    }
 }
 
-.confirmEdit {
-    border-color: rgba(90, 158, 117, 0.35);
-    color: var(--success,);
-
-    &:hover {
-        background: rgba(90, 158, 117, 0.08);
-    }
+.confirmDelete:hover {
+    background: rgba(180, 35, 24, 0.08);
 }
 
 .confirmCancel:disabled,

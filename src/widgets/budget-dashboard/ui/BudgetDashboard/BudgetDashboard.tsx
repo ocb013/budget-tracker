@@ -1,8 +1,8 @@
 import clsx from 'clsx';
-import { useRef, type FC } from 'react';
+import { useRef, useState, type FC } from 'react';
 import cls from './BudgetDashboard.module.scss';
 
-import { getTotals } from '@/entities/transaction';
+import { getTotals, type Transaction } from '@/entities/transaction';
 import { BalanceSummary } from '@/entities/transaction/ui/BalanceSummary/BalanceSummary';
 import { AddTransactionForm } from '@/features/add-transaction';
 import { useTransactionsQuery } from '@/shared/api/queries/transactions';
@@ -19,6 +19,12 @@ export const BudgetDashboard: FC<BudgetDashboardProps> = ({
     const { data, isLoading, isError, error } =
         useTransactionsQuery();
 
+    const [editingTx, setEditingTx] = useState<Transaction | null>(
+        null
+    );
+    const startEdit = (tx: Transaction) => setEditingTx(tx);
+    const cancelEdit = () => setEditingTx(null);
+
     const leftColRef = useRef<HTMLDivElement | null>(null);
     const leftColHeight = useElementHeight(leftColRef);
 
@@ -32,7 +38,11 @@ export const BudgetDashboard: FC<BudgetDashboardProps> = ({
     return (
         <div className={clsx(cls.grid, className)}>
             <div className={cls.leftCol} ref={leftColRef}>
-                <AddTransactionForm />
+                <AddTransactionForm
+                    mode={editingTx ? 'edit' : 'add'}
+                    initialTx={editingTx}
+                    onCancelEdit={cancelEdit}
+                />
                 <BalanceSummary
                     totals={getTotals(data ?? [])}
                     isLoading={isLoading}
@@ -43,6 +53,9 @@ export const BudgetDashboard: FC<BudgetDashboardProps> = ({
                 items={data ?? []}
                 isLoading={isLoading}
                 height={leftColHeight || undefined}
+                onEdit={startEdit}
+                editingId={editingTx?.id || null}
+                onCancelEdit={cancelEdit}
             />
         </div>
     );
